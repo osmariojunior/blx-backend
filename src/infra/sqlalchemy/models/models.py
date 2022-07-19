@@ -6,6 +6,6 @@ class Product(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
-    description = Column(String)
+    details = Column(String)
     price = Column(Float)
     available = Column(Boolean)
