@@ -4,7 +4,7 @@ from typing import Optional, List
 class User(BaseModel):
     id: Optional[str] = None
     name: str
-    tel: str
+    phone: str
 
 class Product(BaseModel):
     id: Optional[str] = None
@@ -12,6 +12,14 @@ class Product(BaseModel):
     details: str
     price: float
     available: bool = False
+
+    class Config:
+        orm_mode = True
+
+class SimpleProduct(BaseModel):
+    id: Optional[str] = None
+    name: str
+    price: float
 
     class Config:
         orm_mode = True
