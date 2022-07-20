@@ -1,5 +1,5 @@
 from sys import prefix
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from src.routers import router_auth, router_products, router_requests
 
@@ -51,7 +51,15 @@ app.include_router(router_products.router, tags=['Products'])
 
 app.include_router(router_auth.router, prefix="/auth", tags=['Users'])
 
-
 # REQUESTS ORDER
 
 app.include_router(router_requests.router, tags=['Requests Order'])
+
+# MIDDLEWARES
+
+@app.middleware('http')
+async def process_time_required(req: Request, next):
+    print('Interceptor arrive...')
+    res = await next(req)
+    print('Interceptor back...')
+    return res
