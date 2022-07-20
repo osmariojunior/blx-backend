@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.routers import router_products, router_users
+from src.routers import router_products, router_users, router_requests
 
-
+# DOCS
 
 tags_metadata = [
     {
@@ -16,6 +16,10 @@ tags_metadata = [
             "description": "Items external docs",
             "url": "https://github.com/osmariojunior",
         },
+    },
+    {
+        "name": "Requests Order",
+        "description": "Route of Requests Order.",
     },
 ]
 
@@ -45,3 +49,8 @@ app.include_router(router_products.router, tags=['Products'])
 # USERS
 
 app.include_router(router_users.router, tags=['Users'])
+
+
+# REQUESTS ORDER
+
+app.include_router(router_requests.router, tags=['Requests Order'])

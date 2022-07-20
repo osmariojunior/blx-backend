@@ -1,4 +1,3 @@
-from requests import request
 from sqlalchemy import Column, ForeignKey, Integer, String, Float, Boolean
 from sqlalchemy.orm import relationship
 from src.infra.sqlalchemy.config.database import Base

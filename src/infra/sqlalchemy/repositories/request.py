@@ -1,6 +1,7 @@
 from sqlalchemy import delete, select, update
 from sqlalchemy.orm import Session
 from src.schemas import schemas
+from src.schemas.schemas import RequestsOrder
 from src.infra.sqlalchemy.models import models
 
 class RepositoryRequest():
@@ -22,22 +23,34 @@ class RepositoryRequest():
 
     def listem(self):
         stmt = select(models.Request)
-        products = self.session.execute(stmt).scalars().all()
-        return products
-
-
-    def search(self, id: int):
-        query = select(models.Request).where(models.Request.id == id)
-        request = self.session.execute(query).first()
+        request = self.session.execute(stmt).scalars().all()
         return request
 
 
-''' def edit(self, id: int, request: schemas.Request):
+    def listem_purchase_for_user_id(self, user_id: int):
+        query = select(models.Request).where(models.Request.user_id == user_id)
+        request = self.session.execute(query).scalars().all()
+        return request
+
+    
+    def listem_sales_for_user_id(self,  user_id: int):
+        query = select(models.Request, models.Product).join_from(models.Request, models.Product).where(models.Request.user_id == user_id)
+        request = self.session.execute(query).scalars().all()
+        return request
+
+
+    def search(self, id: int) -> models.Request:
+        query = select(models.Request).where(models.Request.id == id)
+        request = self.session.execute(query).one()
+        return request[0]
+
+
+    def edit(self, id: int, request: schemas.RequestsOrder):
         update_stmt = update(models.Request).where(
-            models.Request.id == id).values(name=request.name,
-                                            details=request.details,
-                                            price=request.price,
-                                            available=request.available)
+            models.Request.id == id).values(amount=request.amount,
+                                            adress_delivery=request.adress_delivery,
+                                            type_delivery=request.type_delivery,
+                                            comments=request.comments)
    
         self.session.execute(update_stmt)
         self.session.commit()
@@ -48,4 +61,3 @@ class RepositoryRequest():
 
         self.session.execute(delete_stmt)
         self.session.commit()
-'''

@@ -52,3 +52,16 @@ class RequestsOrder(BaseModel):
     product_id: Optional[int]
     user: Optional[SimpleUser]
     products: Optional[SimpleProduct]
+
+    class Config:
+        orm_mode = True
+
+class SimpleRequestsOrder(BaseModel):
+    id: Optional[int] = None
+    amount: int
+    adress_delivery: Optional[str]
+    type_delivery: str
+    comments: Optional[str] = 'Sem observações'
+
+    class Config:
+        orm_mode = True
