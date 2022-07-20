@@ -3,7 +3,25 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.routers import router_products, router_users
 
 
-app = FastAPI()
+
+tags_metadata = [
+    {
+        "name": "Users",
+        "description": "Operations with users. The **login** logic is also here.",
+    },
+    {
+        "name": "Products",
+        "description": "Route of Products",
+        "externalDocs": {
+            "description": "Items external docs",
+            "url": "https://github.com/osmariojunior",
+        },
+    },
+]
+
+
+
+app = FastAPI(openapi_tags=tags_metadata)
 
 # CORS
 
@@ -22,8 +40,8 @@ app.add_middleware(
 
 # PRODUCTS
 
-app.include_router(router_products.router)
+app.include_router(router_products.router, tags=['Products'])
 
 # USERS
 
-app.include_router(router_users.router)
+app.include_router(router_users.router, tags=['Users'])

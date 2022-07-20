@@ -23,6 +23,13 @@ class RepositoryProduct():
         products = self.session.execute(stmt).scalars().all()
         return products
 
+
+    def search(self, id: int):
+        query = select(models.Product).where(models.Product.id == id)
+        product = self.session.execute(query).first()
+        return product
+
+
     def edit(self, id: int, product: schemas.Product):
         update_stmt = update(models.Product).where(
             models.Product.id == id).values(name=product.name,
