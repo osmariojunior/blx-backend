@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException, status
 from src.infra.sqlalchemy.config.database import get_db
 from src.infra.sqlalchemy.repositories.user import RepositoryUser
-from src.schemas.schemas import SimpleUser, User
-from src.infra.providers import hash_provider
+from src.schemas.schemas import LoginData, SimpleUser, User
+from src.infra.providers import hash_provider, token_provider
 
 
 router = APIRouter()
@@ -18,6 +18,21 @@ def singup(user: User, db: Session = Depends(get_db)):
     user.password = hash_provider.generate_hash(user.password)
     user_created = RepositoryUser(db).create(user)
     return user_created
+
+
+@router.post('/login')
+def login(login_data: LoginData, db: Session = Depends(get_db)):
+    password = login_data.password
+    phone = login_data.phone
+    user = RepositoryUser(db).verify_phone(phone)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail= f'User or Password incorrect.')
+    correct_password = hash_provider.verify_hash(password, user.password)
+    if not correct_password:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail= f'User or Password incorrect.')
+
+    token = token_provider.create_access_token({'sub': user.phone})
+    return {'user': user, 'access_token': token}
 
 
 @router.get('/users', response_model=List[User])

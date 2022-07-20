@@ -28,9 +28,9 @@ class RepositoryUser():
         return user
 
 
-    def verify_phone(self, phone):
+    def verify_phone(self, phone: str) -> models.User:
         query = select(models.User).where(models.User.phone == phone)
-        user = self.session.execute(query).first()
+        user = self.session.execute(query).scalars().first()
         return user
 
 

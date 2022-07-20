@@ -30,6 +30,14 @@ class SimpleUser(BaseModel):
     class Config:
         orm_mode = True
 
+
+class LoginData(BaseModel):
+    phone: str
+    password: str
+
+    class Config:
+        orm_mode = True
+
 class Product(BaseModel):
     id: Optional[int] = None
     name: str
