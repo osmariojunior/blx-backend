@@ -5,10 +5,26 @@ from src.infra.sqlalchemy.repositories.user import RepositoryUser
 from src.schemas.schemas import Product, SimpleProduct, User
 from src.infra.sqlalchemy.config.database import get_db, start_db
 from src.infra.sqlalchemy.repositories.product import RepositoryProduct
+from fastapi.middleware.cors import CORSMiddleware
 
 start_db()
 
 app = FastAPI()
+
+# CORS
+
+origins = [
+    "http://localhost:8080",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # PRODUCTS
 
