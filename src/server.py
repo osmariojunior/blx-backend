@@ -1,6 +1,7 @@
+from sys import prefix
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.routers import router_products, router_users, router_requests
+from src.routers import router_auth, router_products, router_requests
 
 # DOCS
 
@@ -48,7 +49,7 @@ app.include_router(router_products.router, tags=['Products'])
 
 # USERS
 
-app.include_router(router_users.router, tags=['Users'])
+app.include_router(router_auth.router, prefix="/auth", tags=['Users'])
 
 
 # REQUESTS ORDER

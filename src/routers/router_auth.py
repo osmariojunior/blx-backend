@@ -4,21 +4,25 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from src.infra.sqlalchemy.config.database import get_db
 from src.infra.sqlalchemy.repositories.user import RepositoryUser
 from src.schemas.schemas import SimpleUser, User
+from src.infra.providers import hash_provider
 
 
 router = APIRouter()
 
 
-@router.post('/users', status_code=status.HTTP_201_CREATED, response_model=User)
-def create_user(user: User, db: Session = Depends(get_db)):
+@router.post('/singup', status_code=status.HTTP_201_CREATED, response_model=User)
+def singup(user: User, db: Session = Depends(get_db)):
+    user_already_registered = RepositoryUser(db).verify_phone(user.phone)
+    if user_already_registered:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail= f'User already registered.')
+    user.password = hash_provider.generate_hash(user.password)
     user_created = RepositoryUser(db).create(user)
     return user_created
+
 
 @router.get('/users', response_model=List[User])
 def listem_user(db: Session = Depends(get_db)):
     user = RepositoryUser(db).listem()
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= f'Not found User')
     return user
 
 
@@ -40,4 +44,4 @@ def update_user(id: int, user: User, db: Session = Depends(get_db)):
 @router.delete('/users/{id}')
 def remove_user(id: int, db: Session = Depends(get_db)):
     RepositoryUser(db).remove(id)
-    return {'msg': 'Product deleted.'}
+    return {'msg': 'User deleted.'}
