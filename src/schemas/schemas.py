@@ -1,31 +1,49 @@
 from pydantic import BaseModel
 from typing import Optional, List
 
-class User(BaseModel):
-    id: Optional[str] = None
-    name: str
-    phone: str
 
-class Product(BaseModel):
-    id: Optional[str] = None
+class SimpleProduct(BaseModel):
+    id: Optional[int] = None
     name: str
-    details: str
     price: float
-    available: bool = False
+    available: bool
 
     class Config:
         orm_mode = True
 
-class SimpleProduct(BaseModel):
-    id: Optional[str] = None
+class User(BaseModel):
+    id: Optional[int] = None
     name: str
+    phone: str
+    password: str
+    products: List[SimpleProduct] = []
+
+    class Config:
+        orm_mode = True
+
+
+class SimpleUser(BaseModel):
+    id: Optional[int] = None
+    name: str
+    phone: str
+
+    class Config:
+        orm_mode = True
+
+class Product(BaseModel):
+    id: Optional[int] = None
+    name: str
+    details: str
     price: float
+    available: bool = False
+    user_id: Optional[int]
+    user: Optional[SimpleUser]
 
     class Config:
         orm_mode = True
 
 class RequestsOrder(BaseModel):
-    id: Optional[str] = None
+    id: Optional[int] = None
     user: User
     product: Product
     amount: int
