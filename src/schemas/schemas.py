@@ -38,6 +38,11 @@ class LoginData(BaseModel):
     class Config:
         orm_mode = True
 
+
+class LoginSucess(BaseModel):
+    user: SimpleUser
+    access_token: str
+
 class Product(BaseModel):
     id: Optional[int] = None
     name: str

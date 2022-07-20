@@ -1,9 +1,11 @@
 from typing import List
+from jose import JWTError
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException, status
 from src.infra.sqlalchemy.config.database import get_db
 from src.infra.sqlalchemy.repositories.user import RepositoryUser
-from src.schemas.schemas import LoginData, SimpleUser, User
+from src.routers.auth_utils import get_user_logged
+from src.schemas.schemas import LoginData, LoginSucess, LoginSucess, SimpleUser, User
 from src.infra.providers import hash_provider, token_provider
 
 
@@ -20,7 +22,7 @@ def singup(user: User, db: Session = Depends(get_db)):
     return user_created
 
 
-@router.post('/login')
+@router.post('/login', response_model=LoginSucess)
 def login(login_data: LoginData, db: Session = Depends(get_db)):
     password = login_data.password
     phone = login_data.phone
@@ -32,7 +34,13 @@ def login(login_data: LoginData, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail= f'User or Password incorrect.')
 
     token = token_provider.create_access_token({'sub': user.phone})
-    return {'user': user, 'access_token': token}
+    return LoginSucess(user=user, access_token=token) 
+    
+
+
+@router.get('/me', response_model=SimpleUser)
+def me(user: User = Depends(get_user_logged), db: Session = Depends(get_db)):
+    return user
 
 
 @router.get('/users', response_model=List[User])

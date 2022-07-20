@@ -10,7 +10,7 @@ EXPIRES_IN_MIN = 3000
 
 
 def create_access_token(data: dict):
-    datas: data.copy()
+    datas = data.copy()
     expiration = datetime.utcnow() + timedelta(minutes=EXPIRES_IN_MIN)
 
     datas.update({'exp': expiration})
