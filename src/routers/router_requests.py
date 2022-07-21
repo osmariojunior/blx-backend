@@ -1,11 +1,12 @@
 from typing import List
 from sqlalchemy.orm import Session
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status, HTTPException, BackgroundTasks
 from src.infra.sqlalchemy.models.models import User
 from src.infra.sqlalchemy.repositories.request import RepositoryRequest
 from src.infra.sqlalchemy.config.database import get_db
 from src.routers.auth_utils import get_user_logged
 from src.schemas.schemas import RequestsOrder, SimpleRequestsOrder
+from src.jobs.write_notification import write_notification
 
 
 router = APIRouter()
@@ -66,3 +67,9 @@ def remove_request(id: int, db: Session = Depends(get_db)):
         return {'msg': 'Requests deleted.'}
     except:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= f'Not found Request with ID = {id}')
+
+
+@router.post('/send_notify/{email}')
+def send_notify(email: str, background: BackgroundTasks):
+    background.add_task(write_notification, email, 'Send')
+    return {'msg': 'Send Message'}
